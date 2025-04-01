@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f0301e223fdc2844f826d202c7c364aa
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - knot: {fileID: 6164400595046997063, guid: bcd9dfc201ec3fd4f9d04383d2db2e65, type: 3}
+  - curve: {fileID: 7075126151465085529, guid: f7f6b3fefdab92d448b90e1ca113f9fd, type: 3}
+  - addCurveButton: {instanceID: 0}
+  - removeCurveButton: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

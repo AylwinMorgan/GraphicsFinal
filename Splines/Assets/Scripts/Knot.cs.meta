@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bd619f87afa3d394f93224fa01b8f1bf
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - controlPoint1: {fileID: 7572422396047197901, guid: e9befa3d3774c0c44bb1549c4bf89b96, type: 3}
+  - controlPoint2: {fileID: 7572422396047197901, guid: e9befa3d3774c0c44bb1549c4bf89b96, type: 3}
+  - knotMesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
