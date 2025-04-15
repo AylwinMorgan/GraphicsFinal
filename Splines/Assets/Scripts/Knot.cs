@@ -13,10 +13,18 @@ public class Knot : MonoBehaviour
     private MeshFilter usedMesh;
     [SerializeField] private Mesh knotMesh;
 
+    private RotationHandle rotationHandle;
+    private PositionHandle positionHandle;
+    private ScaleHandle scaleHandle;
+
     public Color color;
 
     private void Start()
     {
+        //rotationHandle = gameObject.AddComponent<RotationHandle>();
+        //positionHandle = gameObject.AddComponent<PositionHandle>();
+        //scaleHandle = gameObject.AddComponent<ScaleHandle>();
+
         scale = 1f;
         knotRenderer = gameObject.GetComponent<MeshRenderer>();
         usedMesh = gameObject.GetComponent<MeshFilter>();

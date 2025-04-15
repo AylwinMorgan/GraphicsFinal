@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+
+
 
 public class Spline : MonoBehaviour
 {
@@ -109,20 +110,37 @@ public class Spline : MonoBehaviour
 
     public Vector3 getPositionAtTime(float t)
     {
-        int currentCurve = (int)(time / timePerCurve);
+        int currentCurve = (int)(t / timePerCurve);
+        if (currentCurve >= curves.Count)
+        {
+            currentCurve = curves.Count - 1;
+        }
         if (curves[currentCurve] == null)
         {
             Debug.Log("No curve");
         }
-        Vector3 pos = curves[currentCurve].GetComponent<BezierCurve>().GetPositionAtTime((time - (float)currentCurve * timePerCurve)/timePerCurve);
-
+        Vector3 pos = curves[currentCurve].GetComponent<BezierCurve>().GetPositionAtTime((t - (float)currentCurve * timePerCurve)/timePerCurve);
+        
         return pos;
     }
     public Vector3 getForwardVectorAtTime(float t)
     {
-        int currentCurve = (int)(time / timePerCurve);
-
-        Vector3 velocity = curves[currentCurve].GetComponent<BezierCurve>().GetForwardVectorAtTime((time - (float)currentCurve * timePerCurve) / timePerCurve);
+        int currentCurve = (int)(t / timePerCurve);
+        if (currentCurve >= curves.Count)
+        {
+            currentCurve = curves.Count - 1;
+        }
+        Vector3 velocity = curves[currentCurve].GetComponent<BezierCurve>().GetForwardVectorAtTime((t - (float)currentCurve * timePerCurve) / timePerCurve);
         return velocity;
+    }
+
+    public float getApproximateSplineLength()
+    {
+        float total = 0;
+        foreach (GameObject curve in curves)
+        {
+            total += curve.GetComponent<BezierCurve>().GetApproximateCurveLength();
+        }
+        return total;
     }
 }

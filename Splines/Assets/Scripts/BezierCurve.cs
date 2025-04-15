@@ -10,7 +10,7 @@ public class BezierCurve : MonoBehaviour
     public GameObject k1;
     public GameObject k2;
     [SerializeField] private Color color;
-    private LineRenderer lineRenderer;
+    //private LineRenderer lineRenderer;
     const int subsegmentCount = 50;
     const float lineWidth = 0.05f;
     public bool loop = false;
@@ -26,14 +26,15 @@ public class BezierCurve : MonoBehaviour
         {
             getFirstAndLastKnots();
         }
-        
         // setup linerenderer
+        /*
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.positionCount = subsegmentCount;
         lineRenderer.startColor = color;
         lineRenderer.endColor = color;
         lineRenderer.startWidth = lineWidth;
         lineRenderer.endWidth = lineWidth;
+        */
     }
 
     public void getKnotsFromList()
@@ -53,13 +54,13 @@ public class BezierCurve : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (k1 != null && k2 != null)
-        {
-            for (int i = 0; i < subsegmentCount; i++)
-            {
-                lineRenderer.SetPosition(i, GetPositionAtTime((float)i / subsegmentCount));
-            }
-        }
+       // if (k1 != null && k2 != null)
+       // {
+           // for (int i = 0; i < subsegmentCount; i++)
+           // {
+                //lineRenderer.SetPosition(i, GetPositionAtTime((float)i / subsegmentCount));
+           // }
+       // }
     }
 
     public Vector3 GetPositionAtTime(float t)
@@ -90,5 +91,14 @@ public class BezierCurve : MonoBehaviour
         Vector3 result = p0 * (-3 * t * t + 6 * t - 3) + p1 * (9 * t * t - 12 * t + 3) + p2 * (-9 * t * t + 6 * t) + p3 * (3 * t * t);
 
         return result;
+    }
+
+    public float GetApproximateCurveLength()
+    {
+        // gives a rough estimate of length by finding the average between a direct line between knots and a line that passes through the control points
+        float under = Vector3.Distance(k1.transform.position, k2.transform.position);
+        float over = Vector3.Distance(k1.transform.position, k1.GetComponent<Knot>().GetNextControlPoint()) + Vector3.Distance(k1.GetComponent<Knot>().GetNextControlPoint(), k2.GetComponent<Knot>().GetPreviousControlPoint()) + Vector3.Distance(k2.GetComponent<Knot>().GetPreviousControlPoint(), k2.transform.position);
+
+        return (under + over) / 2;
     }
 }
