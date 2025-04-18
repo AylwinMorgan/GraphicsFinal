@@ -11,7 +11,7 @@ public class Spline : MonoBehaviour
     // Start is called before the first frame update
 
     public List<GameObject> knots;
-    List<GameObject> curves;
+    public List<GameObject> curves;
     [SerializeField] private GameObject knot;
     [SerializeField] private GameObject curve;
     [SerializeField] private Button addCurveButton;

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3811907477986537878}
   m_Layer: 0
   m_Name: RailSegment
-  m_TagString: Untagged
+  m_TagString: Rail
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -40,7 +40,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5307982336777491274}
-  m_Mesh: {fileID: 465909488045323089, guid: cd30dfbe4f66c164bb16b223e85e2489, type: 3}
+  m_Mesh: {fileID: 465909488045323089, guid: db8f738452955924fb562f1a63ad08ad, type: 3}
 --- !u!23 &3811907477986537878
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8401682927881122111, guid: cd30dfbe4f66c164bb16b223e85e2489, type: 3}
+  - {fileID: -8401682927881122111, guid: db8f738452955924fb562f1a63ad08ad, type: 3}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

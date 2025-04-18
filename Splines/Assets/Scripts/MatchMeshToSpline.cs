@@ -1,13 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class MatchMeshToSpline : MonoBehaviour
 {
     private MeshFilter meshFilter;
-    private Mesh mesh;
-    private Mesh splineMesh;
-    private MeshRenderer meshRenderer;
+    [SerializeField] private Mesh mesh;
+    //private Mesh splineMesh;
+    //private MeshRenderer meshRenderer;
     private Spline spline;
     private List<GameObject> railSegments;
     [SerializeField] private GameObject rail;
@@ -16,11 +19,11 @@ public class MatchMeshToSpline : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshFilter = GetComponent<MeshFilter>();
-        mesh = meshFilter.sharedMesh;
-        spline = gameObject.GetComponent<Spline>();
-        
+//        meshRenderer = GetComponent<MeshRenderer>();
+//        meshFilter = GetComponent<MeshFilter>();
+        //mesh = meshFilter.sharedMesh;
+        spline = GetComponent<Spline>();
+        railSegments = new List<GameObject>();
         float startPositionX = float.MaxValue;
         float endPositionX = float.MinValue;
 
@@ -30,6 +33,7 @@ public class MatchMeshToSpline : MonoBehaviour
             endPositionX = Mathf.Max(vertex.z, endPositionX);
         }
 
+
         meshLength = Mathf.Abs(endPositionX - startPositionX);
     }
 
@@ -38,20 +42,29 @@ public class MatchMeshToSpline : MonoBehaviour
         // calculate spline length by adding together the length of each contained bezier curve
         float splineLength = spline.getApproximateSplineLength();
 
-        int meshCount = (int)(splineLength / meshLength);
-        
+        //int meshCount = Math.Max((int)(splineLength / meshLength),spline.curves.Count);
+        int meshCount = spline.curves.Count;
+
+
         // reset rail segments list
-        foreach (GameObject rail in railSegments)
+        if (meshCount < GameObject.FindGameObjectsWithTag("Rail").Length)
         {
-            Destroy(rail);
+            foreach (GameObject rail in railSegments)
+            {
+                Destroy(rail);
+            }
+            railSegments.Clear();
         }
-        railSegments.Clear();
+        while (meshCount > GameObject.FindGameObjectsWithTag("Rail").Length)
+        {
+            GameObject newRail = Instantiate(rail);
+            railSegments.Add(newRail);
+        }
 
         for (int i = 0; i < meshCount; i++)
         {
             // create a new rail segment and add it to list
-            GameObject newRail = Instantiate(rail);
-            railSegments.Add(newRail);
+            GameObject newRail = railSegments[i];
             int vertexCount = 0;
             Vector3[] meshVertices = newRail.GetComponent<MeshFilter>().mesh.vertices;
             Vector3[] newVertices = new Vector3[meshVertices.Length];
@@ -78,7 +91,7 @@ public class MatchMeshToSpline : MonoBehaviour
                 Vector3 upVector = Vector3.Cross(forwardVector, rightVector).normalized;
 
                 Quaternion rotation = Quaternion.LookRotation(forwardVector, upVector);
-
+                
                 newVertices[vertexCount] = positionInSpline + rotation * new Vector3(v.x, v.y, v.z);
                 vertexCount++;
             }
@@ -88,7 +101,7 @@ public class MatchMeshToSpline : MonoBehaviour
             splineMesh.RecalculateBounds();
             splineMesh.RecalculateNormals();
 
-            meshFilter.mesh = splineMesh;
+            //meshFilter.mesh = splineMesh;
         }
     }
 

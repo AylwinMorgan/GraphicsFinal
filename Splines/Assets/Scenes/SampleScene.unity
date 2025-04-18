@@ -132,6 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 12228848}
   - component: {fileID: 12228849}
+  - component: {fileID: 12228850}
   m_Layer: 0
   m_Name: Spline
   m_TagString: Spline
@@ -167,12 +168,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   knots: []
+  curves: []
   knot: {fileID: 6164400595046997063, guid: bcd9dfc201ec3fd4f9d04383d2db2e65, type: 3}
   curve: {fileID: 7075126151465085529, guid: f7f6b3fefdab92d448b90e1ca113f9fd, type: 3}
   addCurveButton: {fileID: 428727071}
   removeCurveButton: {fileID: 1698321726}
   objectFollowingSpline: {fileID: 279731899}
   toggleLoopButton: {fileID: 708462560}
+--- !u!114 &12228850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 12228846}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d30d44cb60009f429260c8367e6daeb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh: {fileID: 465909488045323089, guid: db8f738452955924fb562f1a63ad08ad, type: 3}
+  rail: {fileID: 5307982336777491274, guid: 6490229f97592464a9536fe53d3a5879, type: 3}
 --- !u!1 &279731899
 GameObject:
   m_ObjectHideFlags: 0
