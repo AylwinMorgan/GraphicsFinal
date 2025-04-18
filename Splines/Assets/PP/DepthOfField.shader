@@ -4,12 +4,14 @@ Shader "Hidden/DepthOfField"
     {
         _MainTex ("Texture", 2D) = "white" {}
     }
-
+    
     CGINCLUDE
         #include "UnityCG.cginc"
 
-        sampler2D _MainTex;
+        sampler2D _MainTex, _CameraDepthTexture;
         float4 _MainTex_TexelSize;
+
+        float _FocusDistance, _FocusRange;
 
         struct VertexData {
             float4 vertex : POSITION;
@@ -35,13 +37,17 @@ Shader "Hidden/DepthOfField"
         ZTest Always
         ZWrite Off
 
-        Pass{
+        Pass{ // 0 circleOfConfusion
             CGPROGRAM
-                #pragma VertexProgram
-                #pragma FragmentProgram
+                #pragma vertex VertexProgram
+                #pragma fragment FragmentProgram
 
-                half4 FragmentProgram (Interpolators i) : SV_TARGET {
-                    return tex2D (_MainTex, i.uv);
+                half4 FragmentProgram (Interpolators i) : SV_Target {
+                    half depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv); 
+                    depth = LinearEyeDepth(depth);
+                    //return depth;
+                    float coc = (depth - _FocusDistance) / _FocusRange;
+                    return coc;
                 }
             ENDCG
         }
