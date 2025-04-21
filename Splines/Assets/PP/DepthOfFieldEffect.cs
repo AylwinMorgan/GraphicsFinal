@@ -25,9 +25,14 @@ public class DepthOfFieldEffect : MonoBehaviour
             dofMaterial.hideFlags = HideFlags.HideAndDontSave;
         }
 
+        RenderTexture coc = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.RHalf, RenderTextureReadWrite.Linear);
+
         dofMaterial.SetFloat("_FocusDistance", focusDistance);
         dofMaterial.SetFloat("_FocusRange", focusRange);
         
-        Graphics.Blit(source, destination, dofMaterial, circleOfConfusionPass);
+        Graphics.Blit(source, coc, dofMaterial, circleOfConfusionPass);
+        Graphics.Blit(coc, destination);
+
+        RenderTexture.ReleaseTemporary(coc);
     }
 }

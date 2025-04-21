@@ -42,11 +42,12 @@ Shader "Hidden/DepthOfField"
                 #pragma vertex VertexProgram
                 #pragma fragment FragmentProgram
 
-                half4 FragmentProgram (Interpolators i) : SV_Target {
-                    half depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv); 
+                half FragmentProgram (Interpolators i) : SV_Target {
+                    float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv); 
                     depth = LinearEyeDepth(depth);
                     //return depth;
                     float coc = (depth - _FocusDistance) / _FocusRange;
+                    coc = clamp(coc, -1, 1);
                     return coc;
                 }
             ENDCG
