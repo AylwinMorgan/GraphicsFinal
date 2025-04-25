@@ -65,12 +65,12 @@ public class BezierCurve : MonoBehaviour
 
     public Vector3 GetPositionAtTime(float t)
     {
-        Vector3 p0 = k1.transform.position;
-        Vector3 p1 = k1.GetComponent<Knot>().GetNextControlPoint();
-        Vector3 p2 = k2.GetComponent<Knot>().GetPreviousControlPoint();
-        Vector3 p3 = k2.transform.position;
+        //Vector3 p0 = k1.transform.position;
+        //Vector3 p1 = k1.GetComponent<Knot>().GetNextControlPoint();
+        //Vector3 p2 = k2.GetComponent<Knot>().GetPreviousControlPoint();
+        //Vector3 p3 = k2.transform.position;
 
-        Vector3 result = p0 * ((1 - t) * (1 - t) * (1 - t)) + p1 * (3 * t * (1 - t) * (1 - t)) + p2 * (3 * t * t * (1 - t)) + p3 * (t * t * t);
+        //Vector3 result = p0 * ((1 - t) * (1 - t) * (1 - t)) + p1 * (3 * t * (1 - t) * (1 - t)) + p2 * (3 * t * t * (1 - t)) + p3 * (t * t * t);
         //return result;
 
         Vector3 a = Vector3.Lerp(k1.transform.position,k1.GetComponent<Knot>().GetNextControlPoint(),t);

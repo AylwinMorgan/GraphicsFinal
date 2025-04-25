@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Spline
+  - Rail
   layers:
   - Default
   - TransparentFX
