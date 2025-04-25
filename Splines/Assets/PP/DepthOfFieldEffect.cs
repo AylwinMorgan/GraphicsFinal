@@ -9,6 +9,7 @@ public class DepthOfFieldEffect : MonoBehaviour
 
     //Numbering passes
     const int circleOfConfusionPass = 0;
+    const int bokehPass = 1;
 
     [Range(0.1f, 100f)]
     public float focusDistance = 10f;
@@ -36,11 +37,12 @@ public class DepthOfFieldEffect : MonoBehaviour
         // Setting uniforms to use in the shader
         dofMaterial.SetFloat("_FocusDistance", focusDistance);
         dofMaterial.SetFloat("_FocusRange", focusRange);
-        
+
         // Blit to the coc buffer
         Graphics.Blit(source, coc, dofMaterial, circleOfConfusionPass);
-        // New blit to copy that buffer to the destination
         Graphics.Blit(coc, destination);
+        // Blit to the bokeh buffer
+        Graphics.Blit(source, destination, dofMaterial, bokehPass);
 
         RenderTexture.ReleaseTemporary(coc);
     }

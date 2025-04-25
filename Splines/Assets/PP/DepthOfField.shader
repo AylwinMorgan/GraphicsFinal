@@ -42,13 +42,35 @@ Shader "Hidden/DepthOfField"
                 #pragma vertex VertexProgram
                 #pragma fragment FragmentProgram
 
-                half FragmentProgram (Interpolators i) : SV_Target {
-                    float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv); 
+                half4 FragmentProgram (Interpolators i) : SV_Target {
+                    half depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                     depth = LinearEyeDepth(depth);
                     //return depth;
                     float coc = (depth - _FocusDistance) / _FocusRange;
                     coc = clamp(coc, -1, 1);
+                    if (coc < 0) {
+                        return coc * -half4(1,0,0,1);
+                    }
                     return coc;
+                }
+            ENDCG
+        }
+
+        Pass { // 1 bokehPass
+            CGPROGRAM
+                #pragma vertex VertexProgram
+                #pragma fragment FragmentProgram
+
+                half4 FragmentProgram (Interpolators i) : SV_Target {
+                    half3 color = 0;
+                    for (int u = -4; u <= 4; u++){
+                        for (int v = -4; v <= 4; v++){
+                            float2 o = float2(u, v) * _MainTex_TexelSize.xy * 2;
+                            color += tex2D(_MainTex, i.uv + o).rgb;
+                        }
+                    }
+                    color *= 1.0 / 81;
+                    return half4(color, 1);
                 }
             ENDCG
         }
