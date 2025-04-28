@@ -12,6 +12,13 @@ public class Spline : MonoBehaviour
 
     public List<GameObject> knots;
     public List<GameObject> curves;
+
+    public List<Vector3> previousKnotPositions;
+    public List<Quaternion> previousKnotRotations;
+    public List<Vector3> currentKnotPositions;
+    public List<Quaternion> currentKnotRotations;
+
+
     [SerializeField] private GameObject knot;
     [SerializeField] private GameObject curve;
     [SerializeField] private Button addCurveButton;
@@ -27,6 +34,17 @@ public class Spline : MonoBehaviour
     {
         curves = new List<GameObject>();
         knots = new List<GameObject>();
+
+        previousKnotRotations = new List<Quaternion>();
+        previousKnotPositions = new List<Vector3>();
+        currentKnotPositions = new List<Vector3>();
+        currentKnotRotations = new List<Quaternion>();
+
+        foreach (GameObject knot in knots)
+        {
+            currentKnotPositions.Add(knot.transform.position);
+            currentKnotRotations.Add(knot.transform.rotation);
+        }
 
         time = 0.0f;
         timePerCurve = 1.0f;
@@ -47,6 +65,15 @@ public class Spline : MonoBehaviour
     {
         objectFollowingSpline.transform.position = getPositionAtTime(time);
         objectFollowingSpline.transform.forward = getForwardVectorAtTime(time);
+
+        foreach (GameObject knot in knots)
+        {
+            currentKnotPositions.Clear();
+            currentKnotRotations.Clear();
+            currentKnotPositions.Add(knot.transform.position);
+            currentKnotRotations.Add(knot.transform.rotation);
+        }
+
         time += Time.deltaTime;
 
         if (time > timePerCurve * curves.Count)

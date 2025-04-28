@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UIElements;
@@ -30,7 +31,7 @@ public class MatchMeshToSpline : MonoBehaviour
         float startPositionZ = float.MaxValue;
         float endPositionZ = float.MinValue;
 
-        timeBetweenUpdates = 0.2f;
+        timeBetweenUpdates = 1.0f;
         elapsedTime = 0.0f;
 
         foreach (Vector3 vertex in mesh.vertices)
@@ -46,7 +47,7 @@ public class MatchMeshToSpline : MonoBehaviour
     public void DeformMeshToSpline(Spline spline)
     {
         // calculate spline length by adding together the length of each contained bezier curve
-        float splineLength = spline.getApproximateSplineLength();
+        //float splineLength = spline.getApproximateSplineLength();
 
         //int meshCount = Math.Max((int)(splineLength / meshLength),spline.curves.Count);
         int meshCount = spline.curves.Count;
@@ -101,9 +102,12 @@ public class MatchMeshToSpline : MonoBehaviour
                 Vector3 rightVector = Vector3.Cross(Vector3.up, forwardVector).normalized;
                 Vector3 upVector = Vector3.Cross(forwardVector, rightVector).normalized;
 
-                Quaternion rotation = Quaternion.LookRotation(forwardVector, upVector);
+                Vector3 offset = v.x * rightVector + v.y * upVector;
 
-                newVertices[vertexCount] = (positionInSpline + rotation * new Vector3(v.x, v.y, 0.0f));
+                //Quaternion rotation = Quaternion.LookRotation(forwardVector, upVector);
+
+                //newVertices[vertexCount] = (positionInSpline + rotation * new Vector3(v.x, v.y, v.z));
+                newVertices[vertexCount] = positionInSpline + offset;
                 vertexCount++;
             }
             Mesh splineMesh = newRail.GetComponent<MeshFilter>().mesh;
@@ -120,12 +124,16 @@ public class MatchMeshToSpline : MonoBehaviour
     void FixedUpdate()
     {
         // keep updates to only 5x per second instead of every frame for better performance
-        // TODO: only call DeformMeshToSpline() when one of the knots is altered/a knot is added/removed for better performance
         if (elapsedTime > timeBetweenUpdates)
         {
             DeformMeshToSpline(spline);
             elapsedTime = 0.0f;
         }
         elapsedTime += Time.deltaTime;
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            DeformMeshToSpline(spline);
+        }
     }
+
 }
