@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Spline
   - Rail
+  - Knot
   layers:
   - Default
   - TransparentFX
