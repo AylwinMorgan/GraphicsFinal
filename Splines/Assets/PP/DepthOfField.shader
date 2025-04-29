@@ -45,12 +45,10 @@ Shader "Hidden/DepthOfField"
                 half4 FragmentProgram (Interpolators i) : SV_Target {
                     half depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.uv);
                     depth = LinearEyeDepth(depth);
-                    //return depth;
+                    //CoC calculation
                     float coc = (depth - _FocusDistance) / _FocusRange;
+                    //Clamp the CoC to separate foreground and background
                     coc = clamp(coc, -1, 1) * _BokehRadius;
-                    if (coc < 0) {
-                        return coc * -half4(1,0,0,1);
-                    }
                     return coc;
                 }
             ENDCG
