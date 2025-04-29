@@ -209,7 +209,6 @@ public class MatchMeshToSpline : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             DeformMeshToSpline(spline);
-            //isUpdating = !isUpdating;
         }
     }
 
