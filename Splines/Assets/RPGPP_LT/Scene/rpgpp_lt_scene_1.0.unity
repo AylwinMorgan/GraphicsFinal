@@ -4018,7 +4018,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &522811751
 AudioListener:
   m_ObjectHideFlags: 0
@@ -7364,6 +7364,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7075126151465085529, guid: f7f6b3fefdab92d448b90e1ca113f9fd, type: 3}
   m_PrefabInstance: {fileID: 944739585}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &948389352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -3914269798601641493, guid: 9197d73cfe8b06d40808afe8191f4bb4, type: 3}
+  m_PrefabInstance: {fileID: 1049708384}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &948389354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948389352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77de7e9f526a0934b8314fbb356e0cc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dofShader: {fileID: 4800000, guid: ef6da74901d5f764ab1a3a2bfd54bbc8, type: 3}
+  focusDistance: 10
+  focusRange: 3
+  bokehRadius: 4
 --- !u!1 &956939991
 GameObject:
   m_ObjectHideFlags: 0
@@ -8050,7 +8071,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3996882582523799576, guid: 9197d73cfe8b06d40808afe8191f4bb4, type: 3}
       propertyPath: m_TargetDisplay
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8985566377768367225, guid: 9197d73cfe8b06d40808afe8191f4bb4, type: 3}
       propertyPath: m_IsActive
@@ -8059,7 +8080,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -3914269798601641493, guid: 9197d73cfe8b06d40808afe8191f4bb4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 948389354}
   m_SourcePrefab: {fileID: 100100000, guid: 9197d73cfe8b06d40808afe8191f4bb4, type: 3}
 --- !u!1 &1049708385 stripped
 GameObject:
