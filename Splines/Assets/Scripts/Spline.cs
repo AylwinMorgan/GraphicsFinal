@@ -66,6 +66,8 @@ public class Spline : MonoBehaviour
         objectFollowingSpline.transform.position = getPositionAtTime(time);
         objectFollowingSpline.transform.forward = getForwardVectorAtTime(time);
 
+        objectFollowingSpline.transform.position += objectFollowingSpline.transform.up * 0.35f;
+
         foreach (GameObject knot in knots)
         {
             currentKnotPositions.Clear();
@@ -79,6 +81,16 @@ public class Spline : MonoBehaviour
         if (time > timePerCurve * curves.Count)
         {
             time = 0;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            GameObject[] objects = GameObject.FindGameObjectsWithTag("Knot");
+            foreach (GameObject k in objects)
+            {
+                bool isActive = k.GetComponent<MeshRenderer>().enabled;
+                k.GetComponent<MeshRenderer>().enabled = !isActive;
+            }
         }
     }
 
@@ -161,13 +173,31 @@ public class Spline : MonoBehaviour
         return velocity;
     }
 
+    // approximates the length of a spline by taking 100 or so samples from the start to the end of the spline
     public float getApproximateSplineLength()
     {
+        float total = 0f;
+        Vector3 previousPoint = getPositionAtTime(0);
+
+        int sampleCount = 100;
+        for (int i = 1; i < sampleCount; i++)
+        {
+            float t = (float)i / sampleCount * curves.Count;
+            Vector3 nextPoint = getPositionAtTime(t);
+
+            total += Vector3.Distance(previousPoint, nextPoint);
+            previousPoint = nextPoint;
+        }
+
+        return total;
+        // old method of doing this (less helpful and less accurate)
+/*        
         float total = 0;
         foreach (GameObject curve in curves)
         {
             total += curve.GetComponent<BezierCurve>().GetApproximateCurveLength();
         }
         return total;
+*/
     }
 }
