@@ -27,38 +27,29 @@ public class Spline : MonoBehaviour
     [SerializeField] private Button toggleLoopButton;
 
     float time;
-    bool looping;
+    public bool looping;
     float timePerCurve;
 
     private void Start()
     {
-        curves = new List<GameObject>();
-        knots = new List<GameObject>();
-
-        previousKnotRotations = new List<Quaternion>();
-        previousKnotPositions = new List<Vector3>();
-        currentKnotPositions = new List<Vector3>();
-        currentKnotRotations = new List<Quaternion>();
-
-        foreach (GameObject knot in knots)
-        {
-            currentKnotPositions.Add(knot.transform.position);
-            currentKnotRotations.Add(knot.transform.rotation);
-        }
-
         time = 0.0f;
         timePerCurve = 1.0f;
         looping = false;
 
-        GameObject startingKnot = Instantiate(knot, gameObject.transform.position, Quaternion.identity);
+        GameObject startingKnot = GameObject.FindGameObjectWithTag("Knot");
 
-        knots.Add(startingKnot);
+        if (startingKnot == null)
+        {
+            startingKnot = Instantiate(knot, gameObject.transform.position, Quaternion.identity);
+            knots.Add(startingKnot);
+            AddCurve();
+        }
 
-        AddCurve();
+        //addCurveButton.onClick.AddListener(AddCurve);
+        //removeCurveButton.onClick.AddListener(RemoveCurve);
+        //toggleLoopButton.onClick.AddListener(ToggleEnclosedLoop);
 
-        addCurveButton.onClick.AddListener(AddCurve);
-        removeCurveButton.onClick.AddListener(RemoveCurve);
-        toggleLoopButton.onClick.AddListener(ToggleEnclosedLoop);
+        //ToggleEnclosedLoop();
     }
 
     private void Update()
@@ -67,14 +58,6 @@ public class Spline : MonoBehaviour
         objectFollowingSpline.transform.forward = getForwardVectorAtTime(time);
 
         objectFollowingSpline.transform.position += objectFollowingSpline.transform.up * 0.35f;
-
-        foreach (GameObject knot in knots)
-        {
-            currentKnotPositions.Clear();
-            currentKnotRotations.Clear();
-            currentKnotPositions.Add(knot.transform.position);
-            currentKnotRotations.Add(knot.transform.rotation);
-        }
 
         time += Time.deltaTime;
 
@@ -91,6 +74,18 @@ public class Spline : MonoBehaviour
                 bool isActive = k.GetComponent<MeshRenderer>().enabled;
                 k.GetComponent<MeshRenderer>().enabled = !isActive;
             }
+        }
+        if (Input.GetKeyDown(KeyCode.RightBracket))
+        {
+            AddCurve();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftBracket))
+        {
+            RemoveCurve();
+        }
+        if (Input.GetKeyDown(KeyCode.Backslash))
+        {
+            ToggleEnclosedLoop();
         }
     }
 

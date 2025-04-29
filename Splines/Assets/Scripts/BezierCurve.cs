@@ -18,13 +18,16 @@ public class BezierCurve : MonoBehaviour
     private void Start()
     {
         // instantiate knots
-        if (!loop)
+        if (k1 == null || k2 == null)
         {
-            getKnotsFromList();
-        }
-        else
-        {
-            getFirstAndLastKnots();
+            if (!loop)
+            {
+                getKnotsFromList();
+            }
+            else
+            {
+                getFirstAndLastKnots();
+            }
         }
         // setup linerenderer
         /*

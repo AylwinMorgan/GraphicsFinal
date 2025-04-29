@@ -61,8 +61,13 @@ public class MatchMeshToSpline : MonoBehaviour
         // get length of spline and rail segment
         float splineLength = spline.getApproximateSplineLength();
 
-        // get the number of segments that fit along spline (spline length / mesh length)
+        // get the number of segments that fit along spline
         int segmentAmount = Mathf.CeilToInt(splineLength / meshLength);
+
+        if (spline.looping)
+        {
+            segmentAmount--;
+        }
 
         for (int i = 0; i < segmentAmount; i++)
         {
@@ -195,15 +200,16 @@ public class MatchMeshToSpline : MonoBehaviour
     void Update()
     {
         // keep updates to only 5x per second instead of every frame for better performance
-        if (elapsedTime > timeBetweenUpdates && isUpdating)
-        {
-            DeformMeshToSpline(spline);
-            elapsedTime = 0.0f;
-        }
-        elapsedTime += Time.deltaTime;
+        //if (elapsedTime > timeBetweenUpdates && isUpdating)
+        //{
+          //  DeformMeshToSpline(spline);
+            //elapsedTime = 0.0f;
+        //}
+        //elapsedTime += Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            isUpdating = !isUpdating;
+            DeformMeshToSpline(spline);
+            //isUpdating = !isUpdating;
         }
     }
 
