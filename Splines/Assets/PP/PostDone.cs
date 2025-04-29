@@ -1,4 +1,79 @@
-Shader "Hidden/DepthOfField"
+/*.cs
+ * using System;
+using UnityEngine;
+
+[ExecuteInEditMode, ImageEffectAllowedInSceneView]
+public class DepthOfFieldEffect : MonoBehaviour
+{
+    [HideInInspector]
+    public Shader dofShader;
+
+    //Numbering passes
+    const int circleOfConfusionPass = 0;
+    //const int preFilterPass = 1;
+    const int bokehPass = 1;
+    const int postFilterPass = 2;
+
+    [Range(0.1f, 100f)]
+    public float focusDistance = 10f;
+
+    [Range(0.1f, 10f)]
+    public float focusRange = 3f;
+
+    [Range(1f, 10f)]
+    public float bokehRadius = 4f;
+
+    [NonSerialized] Material dofMaterial;
+
+    //Full screen pass
+    private void OnRenderImage(RenderTexture source, RenderTexture destination)
+    {
+        // If the material doesn't exist, create it
+        if (dofMaterial == null)
+        {
+            dofMaterial = new Material(dofShader);
+            // Don't need to see object in hierarchy or save it so hide flags accordingly
+            dofMaterial.hideFlags = HideFlags.HideAndDontSave;
+        }
+
+        // Storing the coc in a temporary buffer because we will need it in another pass
+        // Also, the texture only has one channel (RHalf) because we are only storing 1 value
+        RenderTexture coc = RenderTexture.GetTemporary(source.width, source.height, 0, RenderTextureFormat.RHalf, RenderTextureReadWrite.Linear);
+
+        // Setting uniforms to use in the shader
+        dofMaterial.SetFloat("_BokehRadius", bokehRadius);
+        dofMaterial.SetFloat("_FocusDistance", focusDistance);
+        dofMaterial.SetFloat("_FocusRange", focusRange);
+        //dofMaterial.SetTexture("_CoCTex", coc);
+
+        int width = source.width / 2;
+        int height = source.height / 2;
+        RenderTextureFormat format = source.format;
+        RenderTexture dof0 = RenderTexture.GetTemporary(width, height, 0, format);
+        RenderTexture dof1 = RenderTexture.GetTemporary(width, height, 0, format);
+
+        Graphics.Blit(source, coc, dofMaterial, circleOfConfusionPass);
+        Graphics.Blit(source, dof0); //, dofMaterial, preFilterPass);
+        Graphics.Blit(dof0, dof1, dofMaterial, bokehPass);
+        Graphics.Blit(dof1, dof0, dofMaterial, postFilterPass);
+        Graphics.Blit(dof0, destination);
+        
+        //Graphics.Blit(coc, destination);
+        // Blit to the bokeh buffer
+        //Graphics.Blit(source, destination, dofMaterial, bokehPass);
+
+        RenderTexture.ReleaseTemporary(coc);
+        RenderTexture.ReleaseTemporary(dof0);
+        RenderTexture.ReleaseTemporary(dof1);
+    }
+}
+
+
+
+*/
+
+/*.shader
+ * Shader "Hidden/DepthOfField"
 {
     Properties
     {
@@ -8,7 +83,7 @@ Shader "Hidden/DepthOfField"
     CGINCLUDE
         #include "UnityCG.cginc"
 
-        sampler2D _MainTex, _CameraDepthTexture, _CoCTex, _DoFTex;
+        sampler2D _MainTex, _CameraDepthTexture; //, _CoCTex;
         float4 _MainTex_TexelSize;
 
         float _BokehRadius, _FocusDistance, _FocusRange;
@@ -47,7 +122,7 @@ Shader "Hidden/DepthOfField"
                     depth = LinearEyeDepth(depth);
                     //return depth;
                     float coc = (depth - _FocusDistance) / _FocusRange;
-                    coc = clamp(coc, -1, 1) * _BokehRadius;
+                    coc = clamp(coc, -1, 1); // * _BokehRadius;
                     if (coc < 0) {
                         return coc * -half4(1,0,0,1);
                     }
@@ -56,31 +131,13 @@ Shader "Hidden/DepthOfField"
             ENDCG
         }
 
-        Pass{ // 1 preFilterPass
+        /*Pass{ // 1 preFilterPass
             CGPROGRAM
                 #pragma vertex VertexProgram
                 #pragma fragment FragmentProgram
 
-                half Weigh (half3 c) {
-                    return 1 / (1 + max(max(c.r, c.g), c.b));
-                }
-
                 half4 FragmentProgram (Interpolators i) : SV_Target {
                     float4 o = _MainTex_TexelSize.xyxy * float2(-0.5, 0.5).xxyy;
-                    
-                    half3 s0 = tex2D(_MainTex, i.uv + o.xy).rgb;
-                    half3 s1 = tex2D(_MainTex, i.uv + o.zy).rgb;
-                    half3 s2 = tex2D(_MainTex, i.uv + o.xw).rgb;
-                    half3 s3 = tex2D(_MainTex, i.uv + o.zw).rgb;
-
-                    half w0 = Weigh(s0);
-                    half w1 = Weigh(s1);
-                    half w2 = Weigh(s2);
-                    half w3 = Weigh(s3);
-
-                    half3 color = s0 * w0 + s1 * w1 + s2 * w2 + s3 * w3;
-                    color /= max(w0 + w1 + w2 + w3, 0.00001);
-
                     half coc0 = tex2D(_CoCTex, i.uv + o.xy).r;
                     half coc1 = tex2D(_CoCTex, i.uv + o.zy).r;
                     half coc2 = tex2D(_CoCTex, i.uv + o.xw).r;
@@ -91,12 +148,14 @@ Shader "Hidden/DepthOfField"
                     half cocMax = max(max(max(coc0, coc1), coc2), coc3);
                     half coc = cocMax >= -cocMin ? cocMax : cocMin;
 
-                    return half4(color, coc);
+                    return half4(tex2D(_MainTex, i.uv).rgb, coc);
                 }
             ENDCG
-        }
+        }/
 
-        Pass { // 2 bokehPass
+using static UnityEditor.ShaderData;
+
+Pass { // 1 bokehPass
             CGPROGRAM
                 #pragma vertex VertexProgram
                 #pragma fragment FragmentProgram
@@ -124,7 +183,7 @@ Shader "Hidden/DepthOfField"
 	    				float2(-0.30901664, -0.9510566),
 		    			float2(0.30901712, -0.9510565),
 			    		float2(0.80901694, -0.5877853),
-				    };*/
+				    };/
                 #elif defined (BOKEH_KERNEL_MEDIUM)
                     static const int kernelSampleCount = 22;
                     static const float2 kernel[kernelSampleCount] = {
@@ -153,72 +212,45 @@ Shader "Hidden/DepthOfField"
                     };
                     #endif
 
-                half Weigh (half coc, half radius) {
-                    return saturate((coc - radius + 2) / 2);
-                }
-
                 half4 FragmentProgram (Interpolators i) : SV_Target {
-                    half coc = tex2D(_MainTex, i.uv).a;
-                    
-                    half3 bgColor = 0, fgColor = 0;
-                    half bgWeight = 0, fgWeight = 0;
-                    for (int k = 0; k < kernelSampleCount; k++){
-                        float o = kernel[k]* _BokehRadius;
-                        
-                        half radius = length(o);
-                        o *= _MainTex_TexelSize.xy;
-                        half4 s = tex2D(_MainTex, i.uv + o);
-                        
-                        half4 bgw = Weigh(max(0, min(s.a, coc)), radius);
-                        bgColor += s.rgb * bgw;
-                        bgWeight += bgw;
+                    half3 color = 0;
+half weight = 0;
+for (int k = 0; k < kernelSampleCount; k++)
+{
+    float o = kernel[k]; //* _BokehRadius;
+    o *= _MainTex_TexelSize.xy * _BokehRadius;
+    //half radius = length(o);
+    //o *= _MainTex_TexelSize.xy;
+    color += tex2D(_MainTex, i.uv + o).rgb;
+    /*half4 s = tex2D(_MainTex, i.uv + o);
 
-                        half fgw = Weigh(-s.a, radius);
-                        fgColor += s.rgb * fgw;
-                        fgWeight += fgw;
-                    }
-                    bgColor *= 1 / (bgWeight + (bgWeight == 0));
-                    fgColor *= 1 / (fgWeight + (fgWeight == 0));
+    if (abs(s.a) >= radius) {
+        color += s.rgb;
+        weight += 1;
+    }/
+}
 
-                    half bgfg = min(1, fgWeight * 3.14159265359 / kernelSampleCount);
-                    half3 color = lerp(bgColor, fgColor, bgfg);
-                    return half4(color, bgfg);
+color *= 1.0 / kernelSampleCount; //weight;
+return half4(color, 1);
                 }
             ENDCG
         }
 
-        Pass{ // 3 postFilterPass
+        Pass{ // 2 postFilterPass
             CGPROGRAM
                 #pragma vertex VertexProgram
                 #pragma fragment FragmentProgram
 
                 half4 FragmentProgram (Interpolators i) : SV_Target {
                     float4 o = _MainTex_TexelSize.xyxy * float2(-0.5, 0.5).xxyy;
-
-                    half4 s = tex2D(_MainTex, i.uv + o.xy) + 
-                              tex2D(_MainTex, i.uv + o.zy) + 
-                              tex2D(_MainTex, i.uv + o.xw) + 
-                              tex2D(_MainTex, i.uv + o.zw);
-                    return s * 0.25;
-                }
-            ENDCG
-        }
-
-        Pass{ // 4 combinePass
-            CGPROGRAM
-                #pragma vertex VertexProgram
-                #pragma fragment FragmentProgram
-
-                half4 FragmentProgram (Interpolators i) : SV_Target {
-                    half4 source = tex2D(_MainTex, i.uv);
-                    half coc = tex2D(_CoCTex, i.uv).r;
-                    half4 dof = tex2D(_DoFTex, i.uv);
-
-                    half dofStrength = smoothstep(0.1, 1, abs(coc));
-                    half3 color = lerp(source.rgb, dof.rgb, dofStrength + dof.a - dofStrength * dof.a);
-                    return half4(color, source.a);
+half4 s = tex2D(_MainTex, i.uv + o.xy) +
+          tex2D(_MainTex, i.uv + o.zy) +
+          tex2D(_MainTex, i.uv + o.xw) +
+          tex2D(_MainTex, i.uv + o.zw);
+return s * 0.25;
                 }
             ENDCG
         }
     }
 }
+*/
